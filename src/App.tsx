@@ -70,19 +70,36 @@ function App() {
               target: { tabId: tabs[0].id || 0 },
               func: () => {
                 const techs: string[] = [];
+
+                // Check for global objects
                 if (window.jQuery) techs.push("jQuery");
-                if (window.angular) techs.push("AngularJS");
+                if (window.angular?.version?.full)
+                  techs.push(`AngularJS v${window.angular.version.full}`);
                 if ((window as any).React) techs.push("React");
                 if ((window as any).Vue) techs.push("Vue.js");
 
-                // Look for script sources
-                (
-                  document.querySelectorAll(
-                    "script[src]"
-                  ) as NodeListOf<HTMLScriptElement>
-                ).forEach((script) => {
-                  if (script.src.includes("bootstrap")) techs.push("Bootstrap");
-                  if (script.src.includes("modernizr")) techs.push("Modernizr");
+                // Look for specific DOM attributes
+                if (document.querySelector("[ng-app], [ng-controller]"))
+                  techs.push("AngularJS");
+                if (document.querySelector("[data-reactroot], [data-reactid]"))
+                  techs.push("React");
+                if (document.querySelector("[data-vue]")) techs.push("Vue.js");
+
+                // Analyze script tags
+                const frameworkCDNs = [
+                  { keyword: "react", name: "React" },
+                  { keyword: "vue", name: "Vue.js" },
+                  { keyword: "angular", name: "AngularJS" },
+                  { keyword: "jquery", name: "jQuery" },
+                  { keyword: "bootstrap", name: "Bootstrap" },
+                  { keyword: "modernizr", name: "Modernizr" },
+                ];
+
+                document.querySelectorAll("script[src]").forEach((script) => {
+                  const src = script.getAttribute("src") || "";
+                  frameworkCDNs.forEach(({ keyword, name }) => {
+                    if (src.includes(keyword)) techs.push(name);
+                  });
                 });
 
                 return techs;
@@ -90,7 +107,7 @@ function App() {
             },
             (results) => {
               const clientSideTechs = results[0]?.result || [];
-              setTechnologies([...techHeaders, ...clientSideTechs]);
+              setTechnologies(clientSideTechs);
             }
           );
         } else {
