@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Vulnerability Checker",
+    "version": "1.0",
+    "description": "Checks for basic security vulnerabilities on websites.",
+    "permissions": ["tabs", "webRequest", "storage", "scripting", "activeTab"],
+    "host_permissions": ["<all_urls>"],
+    "icons": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png" 
+    },
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png" 
+      }
+    }
+  }
+  
