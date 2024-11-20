@@ -23,6 +23,7 @@ function App() {
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [technologies, setTechnologies] = useState<string[]>([]);
+  const [cookies, setCookies] = useState<any[]>([]);
 
   const fetchProtocolAndHeaders = async () => {
     try {
@@ -72,11 +73,13 @@ function App() {
                 const techs: string[] = [];
 
                 // Check for global objects
-                if (window.jQuery) techs.push("jQuery");
+                if (window.jQuery)
+                  techs.push(`jQuery: v${window.jQuery.fn.jquery}`);
                 if (window.angular?.version?.full)
                   techs.push(`AngularJS v${window.angular.version.full}`);
                 if ((window as any).React) techs.push("React");
-                if ((window as any).Vue) techs.push("Vue.js");
+                if ((window as any).Vue)
+                  techs.push(`Vue.js: v${window.Vue.version}`);
 
                 // Look for specific DOM attributes
                 if (document.querySelector("[ng-app], [ng-controller]"))
@@ -110,6 +113,18 @@ function App() {
               setTechnologies(clientSideTechs);
             }
           );
+
+          chrome.cookies.getAll({ domain: url.hostname }, (cookies) => {
+            setCookies(
+              cookies.map((cookie) => ({
+                name: cookie.name,
+                value: cookie.value,
+                secure: cookie.secure,
+                httpOnly: cookie.httpOnly,
+                sameSite: cookie.sameSite,
+              }))
+            );
+          });
         } else {
           setError("Could not retrieve the active tab's URL.");
         }
@@ -147,6 +162,19 @@ function App() {
           technologies.map((tech) => <li key={tech}>{tech}</li>)
         ) : (
           <p>No technologies detected.</p>
+        )}
+      </ul>
+      <h3>Detected Cookie Info:</h3>
+      <ul>
+        {cookies.length > 0 ? (
+          cookies.map((cookie, index) => (
+            <li key={index}>
+              {cookie.name}: Secure={String(cookie.secure)}, HttpOnly=
+              {String(cookie.httpOnly)}, SameSite={cookie.sameSite}
+            </li>
+          ))
+        ) : (
+          <p>No cookies found on page</p>
         )}
       </ul>
     </div>

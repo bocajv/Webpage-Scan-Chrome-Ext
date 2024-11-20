@@ -3,7 +3,7 @@
     "name": "Vulnerability Checker",
     "version": "1.0",
     "description": "Checks for basic security vulnerabilities on websites.",
-    "permissions": ["tabs", "webRequest", "storage", "scripting", "activeTab"],
+    "permissions": ["tabs", "webRequest", "storage", "scripting", "activeTab", "cookies"],
     "host_permissions": ["<all_urls>"],
     "icons": {
         "16": "icon.png",
