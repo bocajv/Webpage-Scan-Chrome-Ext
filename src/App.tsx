@@ -18,19 +18,33 @@ const REQUIRED_HEADERS = [
   "Referrer-Policy",
 ];
 
+interface Cookie {
+  name: string;
+  value: string;
+  secure: boolean;
+  httpOnly: boolean;
+  sameSite: string;
+}
+
+interface ServerInfo {
+  key: string;
+  value: string;
+}
+
 function App() {
   const [protocol, setProtocol] = useState("");
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [technologies, setTechnologies] = useState<string[]>([]);
-  const [cookies, setCookies] = useState<any[]>([]);
+  const [cookies, setCookies] = useState<Cookie[]>([]);
+  const [serverInfo, setServerInfo] = useState<ServerInfo[]>([]);
 
   const fetchProtocolAndHeaders = async () => {
     try {
       chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
         if (tabs[0]?.url) {
           const url = new URL(tabs[0].url);
-          setProtocol(url.protocol.replace(":", "")); // Set the protocol
+          setProtocol(url.protocol.replace(":", ""));
 
           // Fetch headers from the active tab's URL
           const response = await fetch(url.href, { method: "HEAD" });
@@ -42,19 +56,18 @@ function App() {
 
           // Analyze HTTP headers for technologies
           const receivedHeaders = [...response.headers.entries()];
-          const techHeaders: string[] = [];
+          const techHeaders: ServerInfo[] = [];
 
-          for (const [key, value] of receivedHeaders) {
-            if (key.toLowerCase() === "server") {
-              techHeaders.push(`Server: ${value}`);
-            }
-            if (key.toLowerCase() === "x-powered-by") {
-              techHeaders.push(`X-Powered-By: ${value}`);
-            }
-            if (key.toLowerCase() === "x-generator") {
-              techHeaders.push(`Generator: ${value}`);
-            }
-          }
+          receivedHeaders.forEach(([key, value]) => {
+            if (key.toLowerCase() === "server")
+              techHeaders.push({ key: "Server", value });
+            if (key.toLowerCase() === "x-powered-by")
+              techHeaders.push({ key: "X-Powered-By", value });
+            if (key.toLowerCase() === "x-generator")
+              techHeaders.push({ key: "Generator", value });
+          });
+
+          setServerInfo(techHeaders);
 
           setMissingHeaders(
             REQUIRED_HEADERS.filter(
@@ -164,6 +177,18 @@ function App() {
           <p>No technologies detected.</p>
         )}
       </ul>
+      <h3>Detected Server Info:</h3>
+      <ul>
+        {serverInfo.length > 0 ? (
+          serverInfo.map((info, index) => (
+            <li key={index}>
+              <strong>{info.key}:</strong> {info.value}
+            </li>
+          ))
+        ) : (
+          <p>No server info detected.</p>
+        )}
+      </ul>
       <h3>Detected Cookie Info:</h3>
       <ul>
         {cookies.length > 0 ? (
@@ -174,7 +199,7 @@ function App() {
             </li>
           ))
         ) : (
-          <p>No cookies found on page</p>
+          <p>No cookies found on page.</p>
         )}
       </ul>
     </div>
