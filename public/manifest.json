@@ -1,9 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "Vulnerability Checker",
+    "name": "Webpage Scanner",
     "version": "1.0",
-    "description": "Checks for basic security vulnerabilities on websites.",
-    "permissions": ["tabs", "webRequest", "storage", "scripting", "activeTab", "cookies"],
+    "description": "Scans a webpage and returns any data that might be of interest",
+    "permissions": ["tabs", "scripting", "activeTab", "cookies"],
     "host_permissions": ["<all_urls>"],
     "icons": {
         "16": "icon.png",
