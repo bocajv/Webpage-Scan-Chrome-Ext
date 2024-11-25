@@ -1,4 +1,4 @@
-body {
+.ext-body {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,7 @@ body {
   padding: 0; 
   background-color: hsl(180, 1%, 84%);
   color: #333;
-  height: 600px; 
+  height: 550px; 
   overflow: hidden; 
   box-sizing: border-box;
 }
@@ -29,13 +29,13 @@ body {
   box-sizing: border-box;
 }
 
-h1 {
+.dawg {
   font-size: 2rem;
   color: #1a73e8;
   margin-bottom: 20px;
 }
 
-h3 {
+.h3-head {
   font-size: 1.2rem;
   color: #444;
   margin-top: 20px;
@@ -43,7 +43,7 @@ h3 {
   padding-bottom: 5px;
 }
 
-button {
+.scan-btn {
   padding: 10px 20px;
   font-size: 1rem;
   color: #fff;
@@ -52,10 +52,11 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 20px;
+  margin-top: 15px;
+  margin-bottom: 7px;
 }
 
-button:hover {
+.scan-btn:hover {
   background-color: #155ab6;
 }
 
@@ -101,7 +102,8 @@ ul li.cookie {
   color: #555;
 }
 
-img {
+.img {
   width: 180px;
   margin-bottom: 20px;
+  border-radius: 15px;
 }
