@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -49,22 +49,62 @@ function App() {
   const [scanTechnologies, setScanTechnologies] = useState(true);
   const [scanServer, setScanServer] = useState(true);
 
+  useEffect(() => {
+    chrome.storage.local.get(
+      [
+        "scanProtocol",
+        "scanHeaders",
+        "scanCookies",
+        "scanTechnologies",
+        "scanServer",
+      ],
+      (result) => {
+        setScanProtocol(result.scanProtocol ?? true);
+        setScanHeaders(result.scanHeaders ?? true);
+        setScanCookies(result.scanCookies ?? true);
+        setScanTechnologies(result.scanTechnologies ?? true);
+        setScanServer(result.scanServer ?? true);
+      }
+    );
+  }, []);
+
+  // Toggle scan options and save preferences
   const toggleScanOption = (option: string) => {
     switch (option) {
       case "protocol":
-        setScanProtocol(!scanProtocol);
+        setScanProtocol((prev) => {
+          const newValue = !prev;
+          chrome.storage.local.set({ scanProtocol: newValue });
+          return newValue;
+        });
         break;
       case "headers":
-        setScanHeaders(!scanHeaders);
+        setScanHeaders((prev) => {
+          const newValue = !prev;
+          chrome.storage.local.set({ scanHeaders: newValue });
+          return newValue;
+        });
         break;
       case "cookies":
-        setScanCookies(!scanCookies);
+        setScanCookies((prev) => {
+          const newValue = !prev;
+          chrome.storage.local.set({ scanCookies: newValue });
+          return newValue;
+        });
         break;
       case "technologies":
-        setScanTechnologies(!scanTechnologies);
+        setScanTechnologies((prev) => {
+          const newValue = !prev;
+          chrome.storage.local.set({ scanTechnologies: newValue });
+          return newValue;
+        });
         break;
       case "server":
-        setScanServer(!scanServer);
+        setScanServer((prev) => {
+          const newValue = !prev;
+          chrome.storage.local.set({ scanServer: newValue });
+          return newValue;
+        });
         break;
       default:
         break;
@@ -126,6 +166,8 @@ function App() {
                 if ((window as any).React) techs.push("React");
                 if ((window as any).Vue)
                   techs.push(`Vue.js: v${window.Vue.version}`);
+                if ((window as any).Ember) techs.push("Ember.js");
+                if ((window as any).Backbone) techs.push("Backbone.js");
 
                 // Look for specific DOM attributes
                 if (document.querySelector("[ng-app], [ng-controller]"))
@@ -142,7 +184,21 @@ function App() {
                   { keyword: "jquery", name: "jQuery" },
                   { keyword: "bootstrap", name: "Bootstrap" },
                   { keyword: "modernizr", name: "Modernizr" },
+                  { keyword: "ember", name: "Ember.js" },
+                  { keyword: "backbone", name: "Backbone.js" },
+                  { keyword: "svelte", name: "Svelte" },
+                  { keyword: "tailwind", name: "Tailwind CSS" },
+                  { keyword: "lodash", name: "Lodash" },
                 ];
+
+                const metaGenerator = document.querySelector(
+                  "meta[name='generator']"
+                );
+                if (metaGenerator) {
+                  techs.push(
+                    `Generator: ${metaGenerator.getAttribute("content")}`
+                  );
+                }
 
                 document.querySelectorAll("script[src]").forEach((script) => {
                   const src = script.getAttribute("src") || "";

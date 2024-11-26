@@ -3,7 +3,7 @@
     "name": "Webpage Scanner",
     "version": "1.0",
     "description": "Scans a webpage and returns any data that might be of interest",
-    "permissions": ["tabs", "scripting", "activeTab", "cookies"],
+    "permissions": ["tabs", "scripting", "activeTab", "cookies", "storage"],
     "host_permissions": ["<all_urls>"],
     "icons": {
         "16": "icon.png",
