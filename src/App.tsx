@@ -39,6 +39,7 @@ function App() {
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [technologies, setTechnologies] = useState<string[]>([]);
+  const [libraries, setLibraries] = useState<string[]>([]);
   const [cookies, setCookies] = useState<Cookie[]>([]);
   const [serverInfo, setServerInfo] = useState<ServerInfo[]>([]);
   const [isScanStarted, setIsScanStarted] = useState(false);
@@ -47,6 +48,7 @@ function App() {
   const [scanHeaders, setScanHeaders] = useState(true);
   const [scanCookies, setScanCookies] = useState(true);
   const [scanTechnologies, setScanTechnologies] = useState(true);
+  const [scanLibraries, setScanLibraries] = useState(true);
   const [scanServer, setScanServer] = useState(true);
 
   useEffect(() => {
@@ -56,6 +58,7 @@ function App() {
         "scanHeaders",
         "scanCookies",
         "scanTechnologies",
+        "scanLibraries",
         "scanServer",
       ],
       (result) => {
@@ -63,6 +66,7 @@ function App() {
         setScanHeaders(result.scanHeaders ?? true);
         setScanCookies(result.scanCookies ?? true);
         setScanTechnologies(result.scanTechnologies ?? true);
+        setScanLibraries(result.scanLibraries ?? true);
         setScanServer(result.scanServer ?? true);
       }
     );
@@ -96,6 +100,13 @@ function App() {
         setScanTechnologies((prev) => {
           const newValue = !prev;
           chrome.storage.local.set({ scanTechnologies: newValue });
+          return newValue;
+        });
+        break;
+      case "libraries":
+        setScanLibraries((prev) => {
+          const newValue = !prev;
+          chrome.storage.local.set({ scanLibraries: newValue });
           return newValue;
         });
         break;
@@ -216,6 +227,67 @@ function App() {
             }
           );
 
+          chrome.scripting.executeScript(
+            {
+              target: { tabId: tabs[0].id || 0 },
+              func: () => {
+                const detectedLibraries: string[] = [];
+
+                // Check for common global objects
+                if (window.jQuery)
+                  detectedLibraries.push(`jQuery: v${window.jQuery.fn.jquery}`);
+                if ((window as any).React) detectedLibraries.push("React");
+                if (window.Vue)
+                  detectedLibraries.push(`Vue.js: v${window.Vue.version}`);
+                if ((window as any).angular?.version?.full)
+                  detectedLibraries.push(
+                    `AngularJS: v${window.angular.version.full}`
+                  );
+                if ((window as any).Backbone)
+                  detectedLibraries.push("Backbone.js");
+                if ((window as any).Ember) detectedLibraries.push("Ember.js");
+                if ((window as any).Svelte) detectedLibraries.push("Svelte");
+
+                // Check for HTML attributes specific to frameworks
+                if (document.querySelector("[ng-app], [ng-controller]"))
+                  detectedLibraries.push("AngularJS");
+                if (document.querySelector("[data-reactroot], [data-reactid]"))
+                  detectedLibraries.push("React");
+                if (document.querySelector("[data-vue]"))
+                  detectedLibraries.push("Vue.js");
+
+                // Analyze script tags for libraries
+                const libraryPatterns = [
+                  { keyword: "jquery", name: "jQuery" },
+                  { keyword: "lodash", name: "Lodash" },
+                  { keyword: "moment", name: "Moment.js" },
+                  { keyword: "axios", name: "Axios" },
+                  { keyword: "d3", name: "D3.js" },
+                  { keyword: "three", name: "Three.js" },
+                  { keyword: "chart", name: "Chart.js" },
+                  { keyword: "bootstrap", name: "Bootstrap" },
+                  { keyword: "tailwind", name: "Tailwind CSS" },
+                  { keyword: "modernizr", name: "Modernizr" },
+                  { keyword: "popper", name: "Popper.js" },
+                ];
+
+                document.querySelectorAll("script[src]").forEach((script) => {
+                  const src = script.getAttribute("src") || "";
+                  libraryPatterns.forEach(({ keyword, name }) => {
+                    if (src.toLowerCase().includes(keyword))
+                      detectedLibraries.push(name);
+                  });
+                });
+
+                return [...new Set(detectedLibraries)];
+              },
+            },
+            (results) => {
+              const libraries = results[0]?.result || [];
+              setLibraries(libraries);
+            }
+          );
+
           chrome.cookies.getAll({ domain: url.hostname }, (cookies) => {
             setCookies(
               cookies.map((cookie) => ({
@@ -259,6 +331,9 @@ function App() {
           <Dropdown.Item onClick={() => toggleScanOption("technologies")}>
             Technologies {scanTechnologies ? "✅" : ""}
           </Dropdown.Item>
+          <Dropdown.Item onClick={() => toggleScanOption("libraries")}>
+            Libraries {scanLibraries ? "✅" : ""}
+          </Dropdown.Item>
           <Dropdown.Item onClick={() => toggleScanOption("server")}>
             Server {scanServer ? "✅" : ""}
           </Dropdown.Item>
@@ -299,6 +374,18 @@ function App() {
                     technologies.map((tech) => <li key={tech}>{tech}</li>)
                   ) : (
                     <p>No technologies detected.</p>
+                  )}
+                </ul>
+              </>
+            )}
+            {scanLibraries && (
+              <>
+                <h3 className="h3-head">Detected Java Script Libraries:</h3>
+                <ul>
+                  {libraries.length > 0 ? (
+                    libraries.map((tech) => <li key={tech}>{tech}</li>)
+                  ) : (
+                    <p>No libraries detected.</p>
                   )}
                 </ul>
               </>
