@@ -34,6 +34,126 @@ interface ServerInfo {
   value: string;
 }
 
+const HEADER_INFO_URLS: Record<string, string> = {
+  "Content-Security-Policy":
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy",
+  "X-Content-Type-Options":
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options",
+  "X-Frame-Options":
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options",
+  "Strict-Transport-Security":
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security",
+  "Referrer-Policy":
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy",
+};
+
+const FRAMEWORK_INFO_URLS: Record<string, string> = {
+  React: "https://reactjs.org/",
+  "Vue.js": "https://vuejs.org/",
+  AngularJS: "https://angularjs.org/",
+  jQuery: "https://jquery.com/",
+  Bootstrap: "https://getbootstrap.com/",
+  Svelte: "https://svelte.dev/",
+  "Backbone.js": "https://backbonejs.org/",
+  "Ember.js": "https://emberjs.com/",
+  "Tailwind CSS": "https://tailwindcss.com/",
+  Lodash: "https://lodash.com/",
+  "Moment.js": "https://momentjs.com/",
+  "D3.js": "https://d3js.org/",
+  "Chart.js": "https://www.chartjs.org/",
+  "Three.js": "https://threejs.org/",
+  Modernizr: "https://modernizr.com/",
+  "Popper.js": "https://popper.js.org/",
+};
+
+const SERVER_INFO_URLS: Record<string, string> = {
+  // Servers
+  "istio-envoy": "https://www.envoyproxy.io/",
+  nginx: "https://nginx.org/",
+  apache: "https://httpd.apache.org/",
+  iis: "https://www.iis.net/",
+  caddy: "https://caddyserver.com/",
+  lighttpd: "https://www.lighttpd.net/",
+  tomcat: "https://tomcat.apache.org/",
+  jetty: "https://www.eclipse.org/jetty/",
+  haproxy: "http://www.haproxy.org/",
+  cloudflare: "https://www.cloudflare.com/",
+
+  // Languages and Frameworks
+  php: "https://www.php.net/",
+  python: "https://www.python.org/",
+  ruby: "https://www.ruby-lang.org/",
+  nodejs: "https://nodejs.org/",
+  asp: "https://dotnet.microsoft.com/",
+  django: "https://www.djangoproject.com/",
+  flask: "https://flask.palletsprojects.com/",
+  rails: "https://rubyonrails.org/",
+  express: "https://expressjs.com/",
+
+  // Content Management Systems (CMSs)
+  wordpress: "https://wordpress.org/",
+  drupal: "https://www.drupal.org/",
+  joomla: "https://www.joomla.org/",
+  magento: "https://magento.com/",
+  shopify: "https://www.shopify.com/",
+  wix: "https://www.wix.com/",
+  squarespace: "https://www.squarespace.com/",
+  ghost: "https://ghost.org/",
+
+  // Static Site Generators
+  jekyll: "https://jekyllrb.com/",
+  hugo: "https://gohugo.io/",
+  gatsby: "https://www.gatsbyjs.com/",
+  nextjs: "https://nextjs.org/",
+  "next.js": "https://nextjs.org/",
+
+  // Frameworks (Front-End)
+  react: "https://reactjs.org/",
+  vue: "https://vuejs.org/",
+  angular: "https://angular.io/",
+  ember: "https://emberjs.com/",
+  backbone: "https://backbonejs.org/",
+  svelte: "https://svelte.dev/",
+  tailwind: "https://tailwindcss.com/",
+  bootstrap: "https://getbootstrap.com/",
+
+  // Other Technologies
+  laravel: "https://laravel.com/",
+  symfony: "https://symfony.com/",
+  codeigniter: "https://codeigniter.com/",
+  spring: "https://spring.io/",
+  zend: "https://framework.zend.com/",
+
+  // Generators and Builders
+  sitecore: "https://www.sitecore.com/",
+  webflow: "https://webflow.com/",
+  umbraco: "https://umbraco.com/",
+  blogger: "https://www.blogger.com/",
+  typora: "https://typora.io/",
+  pelican: "https://getpelican.com/",
+
+  // Platforms
+  heroku: "https://www.heroku.com/",
+  aws: "https://aws.amazon.com/",
+  azure: "https://azure.microsoft.com/",
+  google: "https://cloud.google.com/",
+  firebase: "https://firebase.google.com/",
+};
+
+function getServerInfoUrl(serverValue: string): string {
+  const lowerValue = serverValue.toLowerCase();
+
+  // Find a matching keyword in the SERVER_INFO_URLS mapping
+  for (const keyword of Object.keys(SERVER_INFO_URLS)) {
+    if (lowerValue.includes(keyword)) {
+      return SERVER_INFO_URLS[keyword];
+    }
+  }
+
+  // If no match, return a Google search link
+  return `https://www.google.com/search?q=${encodeURIComponent(serverValue)}`;
+}
+
 function App() {
   const [protocol, setProtocol] = useState("");
   const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
@@ -360,7 +480,19 @@ function App() {
                     <p>No missing security headers.</p>
                   ) : (
                     missingHeaders.map((header) => (
-                      <li key={header}>{header}</li>
+                      <li key={header}>
+                        {HEADER_INFO_URLS[header] ? (
+                          <a
+                            href={HEADER_INFO_URLS[header]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {header}
+                          </a>
+                        ) : (
+                          header
+                        )}
+                      </li>
                     ))
                   )}
                 </ul>
@@ -371,19 +503,48 @@ function App() {
                 <h3 className="h3-head">Detected Technologies:</h3>
                 <ul>
                   {technologies.length > 0 ? (
-                    technologies.map((tech) => <li key={tech}>{tech}</li>)
+                    technologies.map((tech) => (
+                      <li key={tech}>
+                        {FRAMEWORK_INFO_URLS[tech] ? (
+                          <a
+                            href={FRAMEWORK_INFO_URLS[tech]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {tech}
+                          </a>
+                        ) : (
+                          tech
+                        )}
+                      </li>
+                    ))
                   ) : (
                     <p>No technologies detected.</p>
                   )}
                 </ul>
               </>
             )}
+
             {scanLibraries && (
               <>
-                <h3 className="h3-head">Detected Java Script Libraries:</h3>
+                <h3 className="h3-head">Detected JavaScript Libraries:</h3>
                 <ul>
                   {libraries.length > 0 ? (
-                    libraries.map((tech) => <li key={tech}>{tech}</li>)
+                    libraries.map((lib) => (
+                      <li key={lib}>
+                        {FRAMEWORK_INFO_URLS[lib] ? (
+                          <a
+                            href={FRAMEWORK_INFO_URLS[lib]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {lib}
+                          </a>
+                        ) : (
+                          lib
+                        )}
+                      </li>
+                    ))
                   ) : (
                     <p>No libraries detected.</p>
                   )}
@@ -397,7 +558,14 @@ function App() {
                   {serverInfo.length > 0 ? (
                     serverInfo.map((info, index) => (
                       <li key={index}>
-                        <strong>{info.key}:</strong> {info.value}
+                        <strong>{info.key}:</strong>{" "}
+                        <a
+                          href={getServerInfoUrl(info.value)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {info.value}
+                        </a>
                       </li>
                     ))
                   ) : (
@@ -406,6 +574,7 @@ function App() {
                 </ul>
               </>
             )}
+
             {scanCookies && (
               <>
                 <h3 className="h3-head">Detected Cookie Info:</h3>
