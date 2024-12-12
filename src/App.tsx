@@ -334,7 +334,8 @@ function App() {
                 document.querySelectorAll("script[src]").forEach((script) => {
                   const src = script.getAttribute("src") || "";
                   frameworkCDNs.forEach(({ keyword, name }) => {
-                    if (src.includes(keyword)) techs.push(name);
+                    if (src.includes(keyword) && techs.includes(name) == false)
+                      techs.push(name);
                   });
                 });
 
