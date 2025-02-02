@@ -442,23 +442,57 @@ function App() {
           Start Scan!
         </button>
         {/* DropdownButton with title and children */}
-        <DropdownButton title="Select Scan Options" id="dropdown-basic-button">
-          <Dropdown.Item onClick={() => toggleScanOption("protocol")}>
+        <DropdownButton
+          title="Select Scan Options"
+          id="dropdown-basic-button"
+          autoClose="outside"
+        >
+          <Dropdown.Item
+            onClick={(e) => {
+              e.preventDefault();
+              toggleScanOption("protocol");
+            }}
+          >
             Protocol {scanProtocol ? "✅" : ""}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => toggleScanOption("headers")}>
+          <Dropdown.Item
+            onClick={(e) => {
+              e.preventDefault();
+              toggleScanOption("headers");
+            }}
+          >
             Headers {scanHeaders ? "✅" : ""}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => toggleScanOption("technologies")}>
+          <Dropdown.Item
+            onClick={(e) => {
+              e.preventDefault();
+              toggleScanOption("technologies");
+            }}
+          >
             Technologies {scanTechnologies ? "✅" : ""}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => toggleScanOption("libraries")}>
+          <Dropdown.Item
+            onClick={(e) => {
+              e.preventDefault();
+              toggleScanOption("libraries");
+            }}
+          >
             Libraries {scanLibraries ? "✅" : ""}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => toggleScanOption("server")}>
+          <Dropdown.Item
+            onClick={(e) => {
+              e.preventDefault();
+              toggleScanOption("server");
+            }}
+          >
             Server {scanServer ? "✅" : ""}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => toggleScanOption("cookies")}>
+          <Dropdown.Item
+            onClick={(e) => {
+              e.preventDefault();
+              toggleScanOption("cookies");
+            }}
+          >
             Cookies {scanCookies ? "✅" : ""}
           </Dropdown.Item>
         </DropdownButton>
@@ -466,7 +500,7 @@ function App() {
           <>
             {scanProtocol && (
               <>
-                <h3>Protocol Used:</h3>
+                <h3 className="h3-head">Protocol Used:</h3>
                 <p>
                   <strong>{protocol}</strong>
                 </p>
@@ -484,6 +518,7 @@ function App() {
                       <li key={header}>
                         {HEADER_INFO_URLS[header] ? (
                           <a
+                            className="link"
                             href={HEADER_INFO_URLS[header]}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -508,6 +543,7 @@ function App() {
                       <li key={tech}>
                         {FRAMEWORK_INFO_URLS[tech] ? (
                           <a
+                            className="link"
                             href={FRAMEWORK_INFO_URLS[tech]}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -535,6 +571,7 @@ function App() {
                       <li key={lib}>
                         {FRAMEWORK_INFO_URLS[lib] ? (
                           <a
+                            className="link"
                             href={FRAMEWORK_INFO_URLS[lib]}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -559,8 +596,8 @@ function App() {
                   {serverInfo.length > 0 ? (
                     serverInfo.map((info, index) => (
                       <li key={index}>
-                        <strong>{info.key}:</strong>{" "}
                         <a
+                          className="link"
                           href={getServerInfoUrl(info.value)}
                           target="_blank"
                           rel="noopener noreferrer"

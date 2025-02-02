@@ -5,7 +5,7 @@
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0; 
-  background-color: hsl(180, 1%, 84%);
+  background-color: hsl(180, 6%, 28%);
   color: #333;
   height: 550px; 
   overflow: hidden; 
@@ -20,7 +20,7 @@
   height: 500px; 
   margin: 0 auto;
   padding: 20px; 
-  background: #fff;
+  background: #2B2C31;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -30,14 +30,35 @@
 }
 
 .dawg {
-  font-size: 2rem;
-  color: #1a73e8;
-  margin-bottom: 20px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 45px;
+  font-weight: bold;
+  background: linear-gradient(90deg, rgb(74, 165, 240), #080808, rgb(74, 165, 240), #f1f3f1);
+  background-size: 400%;
+  background-clip: text; /* Add standard property */
+  -webkit-background-clip: text; /* For Webkit-based browsers (Safari, Chrome) */
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnimation 8s infinite;
+  text-align: center;
+  margin: 20px 0;
 }
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 
 .h3-head {
   font-size: 1.2rem;
-  color: #444;
+  color: #c9c8c8;
   margin-top: 20px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 5px;
@@ -47,7 +68,7 @@
   padding: 10px 20px;
   font-size: 1rem;
   color: #fff;
-  background-color: #1a73e8;
+  background-color: rgb(74, 165, 240);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -60,13 +81,30 @@
   background-color: #155ab6;
 }
 
+#dropdown-basic-button {
+  font-size: 1rem;
+  color: #fff;
+  background-color: rgb(74, 165, 240);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+#dropdown-basic-button:hover {
+  background-color: #155ab6;
+}
+
 p {
   font-size: 1rem;
   margin: 10px 0;
+  color: #c9c8c8;;
 }
 
-p strong {
-  color: #1a73e8;
+strong {
+  color: rgb(74, 165, 240);
 }
 
 p[style="color: red"] {
@@ -77,6 +115,7 @@ p[style="color: red"] {
 ul {
   list-style: none;
   padding: 0;
+  color: #c9c8c8;;
 }
 
 ul li {
@@ -89,17 +128,22 @@ ul li:last-child {
 }
 
 ul li strong {
-  color: #1a73e8;
+  color: rgb(74, 165, 240);
+}
+
+.link {
+  color: rgb(74, 165, 240);
+
 }
 
 ul li.missing-header {
-  background-color: #ffe9e9;
+  background-color: #c9c8c8;
   color: #d32f2f;
 }
 
 ul li.cookie {
   font-family: "Courier New", Courier, monospace;
-  color: #555;
+  color: #c9c8c8;
 }
 
 .img {
